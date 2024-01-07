@@ -14,12 +14,14 @@ namespace Application.Interfaces
 
         IEnumerable<MovieViewModel> GetAll();
 
-        IEnumerable<MovieViewModel> GetAll(int skip, int take);
+        IEnumerable<MovieViewModel> GetAll(Guid customerId, int skip, int take);
 
         MovieViewModel GetById(Guid id);
 
         void Update(MovieViewModel movieViewModel);
 
         void Remove(Guid id);
+
+        void Like(MovieLikeViewModel movieLikeViewModel);
     }
 }

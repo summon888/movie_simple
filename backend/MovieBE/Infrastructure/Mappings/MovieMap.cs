@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Movies.Entities;
+using Domain.Likes.Entities;
 
 namespace Infrastructure.Mappings
 {

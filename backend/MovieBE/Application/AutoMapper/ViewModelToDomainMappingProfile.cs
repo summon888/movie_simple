@@ -1,6 +1,7 @@
 ﻿using Application.ViewModels;
 using AutoMapper;
 using Domain.Customers.Commands;
+using Domain.Likes.Commands;
 using Domain.Movies.Commands;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,9 @@ namespace Application.AutoMapper
                 .ConstructUsing(c => new AddNewMovieCommand(c.Title, c.Description, c.ThumbnailURL, c.Author));
             CreateMap<MovieViewModel, UpdateMovieCommand>()
                 .ConstructUsing(c => new UpdateMovieCommand(c.Id, c.Title, c.Description, c.ThumbnailURL, c.Author));
+            //Like
+            CreateMap<MovieLikeViewModel, AddLikeCommand>()
+                .ConstructUsing(c => new AddLikeCommand(c.MovieId, c.CustomerId, c.IsLike));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.ViewModels;
 using AutoMapper;
 using Domain.Customers.Entities;
+using Domain.Likes.Entities;
 using Domain.Movies.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace Application.AutoMapper
         {
             CreateMap<Customer, CustomerViewModel>();
             CreateMap<Movie, MovieViewModel>();
+            CreateMap<Like, MovieLikeViewModel>();
         }
     }
 }

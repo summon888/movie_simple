@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Models;
+using Domain.Likes.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,7 @@ namespace Domain.Customers.Entities
         public string Email { get; set; }
 
         public string DisplayName { get; set; }
+
+        public ICollection<Like> Likes { get; set; }
     }
 }

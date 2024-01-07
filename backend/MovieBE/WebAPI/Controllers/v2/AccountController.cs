@@ -58,25 +58,38 @@ namespace WebAPI.Controllers.v2
                 return Response();
             }
 
-            // Sign In
-            var signInResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
-            if (!signInResult.Succeeded)
-            {
-                NotifyError(signInResult.ToString(), "Login failure");
-                return Response();
-            }
+            // Tìm người dùng theo tên người dùng hoặc email
+            var user = await _userManager.FindByNameAsync(model.UsernameOrEmail) ??
+                       await _userManager.FindByEmailAsync(model.UsernameOrEmail);
 
-            // Get User
-            var appUser = await _userManager.FindByEmailAsync(model.Email);
-            if (appUser is null)
+            if (user != null)
             {
+                // Kiểm tra mật khẩu
+                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+
+                if (!result.Succeeded)
+                {
+                    NotifyError(result.ToString(), "Login failure");
+                    return Response();
+                }
+
+                // Get User
+                var appUser = await _userManager.FindByEmailAsync(user.Email);
+                if (appUser is null)
+                {
+                    return Response();
+                }
+            }
+            else
+            {
+                NotifyError("Failed", "Login failure");
                 return Response();
             }
 
             // var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
 
             _logger.LogInformation(1, "User logged in.");
-            return Response(await GenerateToken(appUser));
+            return Response(await GenerateToken(user));
         }
 
         [HttpPost]
@@ -91,7 +104,7 @@ namespace WebAPI.Controllers.v2
             }
 
             // Add User
-            var appUser = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var appUser = new ApplicationUser { UserName = model.Username, Email = model.Email };
             var identityResult = await _userManager.CreateAsync(appUser, model.Password);
             if (!identityResult.Succeeded)
             {

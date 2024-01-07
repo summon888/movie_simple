@@ -10,8 +10,7 @@ namespace Identity.Models.AccountViewModels
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string UsernameOrEmail { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

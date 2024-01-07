@@ -36,5 +36,13 @@ namespace Application.ViewModels
         [MaxLength(100)]
         [DisplayName("Author")]
         public string Author { get; set; }
+
+        public int TotalLike { get; set; }
+
+        public bool Liked { get; set; }
+
+        public int TotalDislikes { get; set; }
+
+        public bool DisLiked { get; set; }
     }
 }

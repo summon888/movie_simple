@@ -1,4 +1,5 @@
 ﻿using Domain.Core.Models;
+using Domain.Likes.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,5 +27,14 @@ namespace Domain.Movies.Entities
         public string Title { get; set; }
 
         public string Author { get; set; }
+
+
+        //private ICollection<Like> _like;
+
+        //public virtual ICollection<Like> Likes
+        //{
+        //    get { return _like ?? (_like = new List<Like>()); }
+        //    protected set { _like = value; }
+        //}
     }
 }

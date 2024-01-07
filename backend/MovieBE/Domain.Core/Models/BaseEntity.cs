@@ -8,7 +8,7 @@ namespace Domain.Core.Models
 {
     public class BaseEntity
     {
-        public Guid Id { get; protected set; }
+        public virtual Guid Id { get; protected set; }
 
         public bool IsDeleted { get; set; }
 

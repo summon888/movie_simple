@@ -1,6 +1,7 @@
 ﻿using Domain.Core.Bus;
 using Domain.Core.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

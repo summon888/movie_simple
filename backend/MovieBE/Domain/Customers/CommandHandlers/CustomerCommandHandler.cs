@@ -42,7 +42,7 @@ namespace Domain.Customers.CommandHandlers
                 return Task.FromResult(false);
             }
 
-            var customer = new Customer(Guid.NewGuid(), message.DisplayName, message.Email);
+            var customer = new Customer(message.Id, message.DisplayName, message.Email);
 
             if (_customerRepository.GetByEmail(customer.Email) != null)
             {

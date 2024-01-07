@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Infrastructure.Mappings;
 using Domain.Customers.Entities;
 using Domain.Movies.Entities;
+using Domain.Likes.Entities;
 
 namespace Infrastructure.Context
 {
@@ -22,6 +23,8 @@ namespace Infrastructure.Context
         public DbSet<Customer> Customers { get; set; }
 
         public DbSet<Movie> Movies { get; set; }
+
+        public DbSet<Like> Likes { get; set; }
 
         // public override int SaveChanges()
         // {

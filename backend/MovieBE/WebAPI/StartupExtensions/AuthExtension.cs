@@ -76,6 +76,7 @@ namespace WebAPI.StartupExtensions
                     .Build();
                 options.AddPolicy("CanWriteCustomerData", policy1);
                 options.AddPolicy("CanRemoveCustomerData", policy2);
+
             });
 
             return services;

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Application.ViewModels;
+using Application.Interfaces;
 
 namespace WebAPI.Controllers.v1
 {
@@ -21,6 +23,7 @@ namespace WebAPI.Controllers.v1
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ICustomerAppService _customerAppService;
         private readonly AuthDbContext _dbContext;
         private readonly IUser _user;
         private readonly IJwtFactory _jwtFactory;
@@ -30,6 +33,7 @@ namespace WebAPI.Controllers.v1
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
+            ICustomerAppService customerAppService,
             AuthDbContext dbContext,
             IUser user,
             IJwtFactory jwtFactory,
@@ -41,6 +45,7 @@ namespace WebAPI.Controllers.v1
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _customerAppService = customerAppService;
             _dbContext = dbContext;
             _user = user;
             _jwtFactory = jwtFactory;
@@ -59,24 +64,29 @@ namespace WebAPI.Controllers.v1
             }
 
             // Sign In
-            var signInResult = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
-            if (!signInResult.Succeeded)
+            // Tìm người dùng theo tên người dùng hoặc email
+            var user = await _userManager.FindByNameAsync(model.UsernameOrEmail) ??
+                       await _userManager.FindByEmailAsync(model.UsernameOrEmail);
+
+            if (user != null)
             {
-                NotifyError(signInResult.ToString(), "Login failure");
-                return Response();
+                // Kiểm tra mật khẩu
+                var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+
+                if (!result.Succeeded)
+                {
+                    NotifyError(result.ToString(), "Login failure");
+                    return Response();
+                }
+
+                // var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
+
+                _logger.LogInformation(1, "User logged in.");
+                return Response(await GenerateToken(user));
             }
 
-            // Get User
-            var appUser = await _userManager.FindByEmailAsync(model.Email);
-            if (appUser is null)
-            {
-                return Response();
-            }
-
-            // var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-
-            _logger.LogInformation(1, "User logged in.");
-            return Response(await GenerateToken(appUser));
+            NotifyError("Failed", "Login failure");
+            return Response();
         }
 
         [HttpPost]
@@ -90,8 +100,11 @@ namespace WebAPI.Controllers.v1
                 return Response();
             }
 
+            //add customer
+            var customerId = Guid.NewGuid();
+            
             // Add User
-            var appUser = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var appUser = new ApplicationUser { UserName = model.Username, Email = model.Email, CustomerId = customerId };
             var identityResult = await _userManager.CreateAsync(appUser, model.Password);
             if (!identityResult.Succeeded)
             {
@@ -117,6 +130,13 @@ namespace WebAPI.Controllers.v1
 
             // SignIn
             // await _signInManager.SignInAsync(user, false);
+            //auto register customer
+            _customerAppService.Register(new CustomerViewModel()
+            {
+                DisplayName = model.Email,
+                Email = model.Email,
+                Id = customerId,
+            });
 
             _logger.LogInformation(3, "User created a new account with password.");
             return Response();
