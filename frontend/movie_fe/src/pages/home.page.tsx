@@ -20,15 +20,17 @@ const HomePage = () => {
 
   useEffect(() => {
     getMovie({ page }).then((result: any) => {
-      const new_movies = result.data.data;
-      const need_add: Array<any> = [];
-      for (const movie of new_movies) {
-        if (items.findIndex((a: any) => a.id == movie.id) > -1)
-          continue;
-
-        need_add.push(movie);
+      if (!result.error){
+        const new_movies = result.data?.data;
+        const need_add: Array<any> = [];
+        for (const movie of new_movies) {
+          if (items.findIndex((a: any) => a.id == movie.id) > -1)
+            continue;
+  
+          need_add.push(movie);
+        }
+        setItems([...items, ...need_add as never[]])
       }
-      setItems([...items, ...need_add as never[]])
     });
   }, [page]);
 
