@@ -12,7 +12,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../redux/store';
 import { useLogoutUserMutation } from '../redux/api/authApi';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { useDispatch } from 'react-redux';
@@ -35,7 +35,6 @@ const Header = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.userState.user);
   const dispatch = useDispatch();
-  const [getCurrent, { data, isLoading: isLoading2, isSuccess: isSuccess2 }] = useGetCurrentMutation();
 
   const [logoutUser, { isLoading, isSuccess, error, isError }] =
     useLogoutUserMutation();
@@ -61,17 +60,6 @@ const Header = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
-
-  // useEffect(() => {
-  //   getCurrent(null).then((result: any)=>{
-  //     if (result.error){
-  //       console.log(result.error);
-  //       if (result.error.status === 401){
-  //         dispatch(logout());
-  //       }
-  //     }
-  //   })
-  // }, [])
 
   const onLogoutHandler = async () => {
     logoutUser();

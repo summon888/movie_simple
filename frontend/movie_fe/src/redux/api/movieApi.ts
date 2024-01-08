@@ -15,6 +15,13 @@ export const movieApi = createApi({
         return {
           url: `/Movie/movie-management/pagination?skip=${data.page}&take=2`,
           credentials: 'include',
+          // This is the same as passing 'text'
+          responseHandler: (response) => {
+            if (response.status === 401) {
+              localStorage.clear();
+            }
+            return response.json()
+          },
         };
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
