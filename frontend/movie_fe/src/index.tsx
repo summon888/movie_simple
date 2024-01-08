@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { CookiesProvider } from 'react-cookie';
 import App from './App';
-import AuthMiddleware from './helpers/AuthMiddleware';
 import { store } from './redux/store';
 
 const root = ReactDOM.createRoot(
@@ -14,11 +12,11 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <Router>
-        <CookiesProvider>
-          <AuthMiddleware>
+        {/* <CookiesProvider>
+          <AuthMiddleware> */}
             <App />
-          </AuthMiddleware>
-        </CookiesProvider>
+          {/* </AuthMiddleware>
+        </CookiesProvider> */}
       </Router>
     </Provider>
   </React.StrictMode>

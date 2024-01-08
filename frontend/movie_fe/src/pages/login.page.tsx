@@ -9,7 +9,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
 import { useLoginUserMutation } from '../redux/api/authApi';
-import { setAuthenToken } from '../redux/features/userSlice';
+import { setAuthenToken, setUser } from '../redux/features/userSlice';
 import { IAuthen, IUser } from '../redux/api/types';
 import { useDispatch } from 'react-redux';
 
@@ -35,10 +35,10 @@ const LinkItem = styled(Link)`
 
 const loginSchema = object({
   usernameOrEmail: string()
-    .min(1,'Email address is required'),
-    // .email('Email Address is invalid'),
+    .min(1, 'Email address is required'),
+  // .email('Email Address is invalid'),
   password: string()
-    .min(1,'Password is required')
+    .min(1, 'Password is required')
     .min(8, 'Password must be more than 8 characters')
     .max(32, 'Password must be less than 32 characters'),
 });
@@ -56,6 +56,7 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const from = ((location.state as any)?.from.pathname as string) || '/';
 
@@ -64,6 +65,13 @@ const LoginPage = () => {
     handleSubmit,
     formState: { isSubmitSuccessful },
   } = methods;
+
+  useEffect(() => {
+    const user = localStorage.getItem("user") || "";
+    if (user){
+      navigate('/');
+    }
+  })
 
   useEffect(() => {
     if (isSuccess) {
@@ -93,12 +101,24 @@ const LoginPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
-  const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
+  const onSubmitHandler: SubmitHandler<LoginInput> = async (values) => {
     // ? Executing the loginUser Mutation
-    loginUser(values).then((result: IAuthen) => {
-      //console.log(result);
-      setAuthenToken(result);
-    });
+    const response: any = await loginUser(values);
+    if (response){
+      const loginData = response.data as IAuthen;
+      if (loginData.success) {
+        dispatch(setAuthenToken(loginData));
+        dispatch(setUser(values.usernameOrEmail));
+      } else {
+        toast.error('login fail', {
+          position: 'top-right',
+        });
+      }
+    }else{
+      toast.error('login fail', {
+        position: 'top-right',
+      });
+    }   
   };
 
   return (

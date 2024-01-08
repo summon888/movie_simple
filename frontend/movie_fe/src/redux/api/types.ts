@@ -21,4 +21,12 @@ export interface IUser {
     };
   }
   
+  export interface IMovie {
+
+  }
+
+  export interface ILike {
+    movieId: string;
+    isLike: boolean
+  }
   

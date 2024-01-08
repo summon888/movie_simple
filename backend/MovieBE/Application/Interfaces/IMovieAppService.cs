@@ -14,7 +14,7 @@ namespace Application.Interfaces
 
         IEnumerable<MovieViewModel> GetAll();
 
-        IEnumerable<MovieViewModel> GetAll(Guid customerId, int skip, int take);
+        List<MovieViewModel> GetAll(Guid customerId, int skip, int take);
 
         MovieViewModel GetById(Guid id);
 

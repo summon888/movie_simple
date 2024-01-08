@@ -15,6 +15,8 @@ import {
   import { useEffect } from 'react';
   import { toast } from 'react-toastify';
   import { LoadingButton as _LoadingButton } from '@mui/lab';
+import { useDispatch } from 'react-redux';
+import { logout } from '../redux/features/userSlice';
   
   const LoadingButton = styled(_LoadingButton)`
     padding: 0.4rem;
@@ -31,6 +33,7 @@ import {
   const Header = () => {
     const navigate = useNavigate();
     const user = useAppSelector((state) => state.userState.user);
+    const dispatch = useDispatch();
   
     const [logoutUser, { isLoading, isSuccess, error, isError }] =
       useLogoutUserMutation();
@@ -59,6 +62,7 @@ import {
   
     const onLogoutHandler = async () => {
       logoutUser();
+      dispatch(logout());
     };
   
     return (
@@ -70,7 +74,7 @@ import {
               onClick={() => navigate('/')}
               sx={{ cursor: 'pointer' }}
             >
-              CodevoWeb
+              MovieHub Hi, {user} 
             </Typography>
             <Box display='flex' sx={{ ml: 'auto' }}>
               {!user && (
@@ -95,24 +99,6 @@ import {
                   Logout
                 </LoadingButton>
               )}
-              {user && user?.role === 'admin' && (
-                <LoadingButton
-                  sx={{ backgroundColor: '#eee', ml: 2 }}
-                  onClick={() => navigate('/admin')}
-                >
-                  Admin
-                </LoadingButton>
-              )}
-              <Box sx={{ ml: 4 }}>
-                <Tooltip
-                  title='Post settings'
-                  onClick={() => navigate('/profile')}
-                >
-                  <IconButton sx={{ p: 0 }}>
-                    <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
-                  </IconButton>
-                </Tooltip>
-              </Box>
             </Box>
           </Toolbar>
         </Container>

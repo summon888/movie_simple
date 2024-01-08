@@ -1,34 +1,40 @@
 import { CssBaseline } from '@mui/material';
 import { Route, Routes } from 'react-router-dom';
-import ProfilePage from './pages/profile.page';
 import HomePage from './pages/home.page';
 import LoginPage from './pages/login.page';
 import RegisterPage from './pages/register.page';
 import UnauthorizePage from './pages/unauthorize.page';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AdminPage from './pages/admin.page';
 import Layout from './components/Layout';
-import RequireUser from './components/RequireUser';
+import ProtectedRoute from './components/protectedRoute';
+import { useAppDispatch } from './redux/store';
+import { useEffect } from 'react';
+import { setAuthenToken, setUser } from './redux/features/userSlice';
 
 function App() {
+  const dispatch = useAppDispatch();
+  const user = localStorage.getItem("user") || "";
+
+  useEffect(() => {
+    if (user){
+      dispatch(setUser(user));
+      const token = JSON.parse(localStorage.getItem("tokenData") || "{}")
+      dispatch(setAuthenToken(token));
+
+      //direct home
+      //window.location.href = "/";
+    }
+  }, [])
+
   return (
     <>
       <CssBaseline />
       <ToastContainer />
       <Routes>
         <Route path='/' element={<Layout />}>
-        <Route index element={<HomePage />} />
           {/* Private Route */}
-          <Route element={<RequireUser allowedRoles={['user', 'admin']} />}>
-            <Route index element={<HomePage />} />
-          </Route>
-          <Route element={<RequireUser allowedRoles={['user', 'admin']} />}>
-            <Route path='profile' element={<ProfilePage />} />
-          </Route>
-          <Route element={<RequireUser allowedRoles={['admin']} />}>
-            <Route path='admin' element={<AdminPage />} />
-          </Route>
+          <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path='unauthorized' element={<UnauthorizePage />} />
         </Route>
         <Route path='login' element={<LoginPage />} />

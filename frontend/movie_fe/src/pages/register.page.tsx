@@ -31,18 +31,10 @@ const LinkItem = styled(Link)`
 `;
 
 const registerSchema = object({
-  name: string().min(1,'Full name is required').max(100),
-  email: string()
-    .min(1,'Email address is required')
-    .email('Email Address is invalid'),
-  password: string()
-    .min(1,'Password is required')
-    .min(8, 'Password must be more than 8 characters')
-    .max(32, 'Password must be less than 32 characters'),
-  passwordConfirm: string().min(1,'Please confirm your password'),
-}).refine((data) => data.password === data.passwordConfirm, {
-  path: ['passwordConfirm'],
-  message: 'Passwords do not match',
+    username: string(),
+    email: string(),
+    password: string(),
+    confirmPassword: string()
 });
 
 export type RegisterInput = TypeOf<typeof registerSchema>;
@@ -67,6 +59,7 @@ const RegisterPage = () => {
   useEffect(() => {
     if (isSuccess) {
       toast.success('User registered successfully');
+      navigate("/login")
     }
 
     if (isError) {
@@ -94,8 +87,16 @@ const RegisterPage = () => {
   }, [isSubmitSuccessful]);
 
   const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
+    console.log(values);
     // ? Executing the RegisterUser Mutation
-    registerUser(values);
+    registerUser(values).then((result: any) => {
+      console.log(JSON.stringify(result));
+      if (!result.data?.success) {
+        toast.error(JSON.stringify(result), {
+          position: 'top-right',
+        })
+      }
+    });
   };
 
   return (
@@ -148,11 +149,11 @@ const RegisterPage = () => {
               borderRadius: 2,
             }}
           >
-            <FormInput name='name' label='Full Name' />
+            <FormInput name='username' label='Username' />
             <FormInput name='email' label='Email Address' type='email' />
             <FormInput name='password' label='Password' type='password' />
             <FormInput
-              name='passwordConfirm'
+              name='confirmPassword'
               label='Confirm Password'
               type='password'
             />

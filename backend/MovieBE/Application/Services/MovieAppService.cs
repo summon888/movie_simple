@@ -47,24 +47,26 @@ namespace Application.Services
             return _movieRepository.GetAll().ProjectTo<MovieViewModel>(_mapper.ConfigurationProvider);
         }
 
-        public IEnumerable<MovieViewModel> GetAll(Guid customerId, int skip, int take)
+        public List<MovieViewModel> GetAll(Guid customerId, int skip, int take)
         {
             var movies = _movieRepository.GetAll(new MovieFilterPaginatedSpecification(skip, take))
-                .ProjectTo<MovieViewModel>(_mapper.ConfigurationProvider);
-
+                .ProjectTo<MovieViewModel>(_mapper.ConfigurationProvider).ToList();
+            //đoạn này có thể xử lý bằng relation nhưng cấu hình đang bị lỗi 
+            #region 
             var listIds = movies.Select(a => a.Id).ToList();
 
             var listLikesAndDisLikes = _likeRepository.GetLike(listIds);
 
             foreach (var movie in movies)
             {
-                var listLike = listLikesAndDisLikes.Where(a => a.MovieId == movie.Id);
-                var listDisLike = listLikesAndDisLikes.Where(a => a.MovieId == movie.Id && a.IsLike);
+                var listLike = listLikesAndDisLikes.Where(a => a.MovieId == movie.Id && a.IsLike);
+                var listDisLike = listLikesAndDisLikes.Where(a => a.MovieId == movie.Id && !a.IsLike);
                 movie.TotalLike = listLike.Count();
                 movie.TotalDislikes = listDisLike.Count();
                 movie.Liked = listLike.Any(a => a.CustomerId == customerId && a.IsLike);
                 movie.DisLiked = listDisLike.Any(a => a.CustomerId == customerId && !a.IsLike);
             }
+            #endregion
 
             return movies;
         }
