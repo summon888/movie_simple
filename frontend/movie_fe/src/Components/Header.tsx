@@ -62,16 +62,16 @@ const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  useEffect(() => {
-    getCurrent(null).then((result: any)=>{
-      if (result.error){
-        console.log(result.error);
-        if (result.error.status === 401){
-          dispatch(logout());
-        }
-      }
-    })
-  }, [])
+  // useEffect(() => {
+  //   getCurrent(null).then((result: any)=>{
+  //     if (result.error){
+  //       console.log(result.error);
+  //       if (result.error.status === 401){
+  //         dispatch(logout());
+  //       }
+  //     }
+  //   })
+  // }, [])
 
   const onLogoutHandler = async () => {
     logoutUser();
